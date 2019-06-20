@@ -7,7 +7,7 @@
 //variables para el servidor web
 #include <SPI.h>
 #include <Ethernet.h>
-
+#include "fingerprint/FingerPrint.h"
 
 boolean  is_enrrol = false;
 // Enter a MAC address and IP address for your controller below.
@@ -21,6 +21,8 @@ IPAddress ip(192, 168, 1, 177);
 // with the IP address and port you want to use
 // (port 80 is default for HTTP):
 EthernetServer server(80);
+
+FingerPrint finger();
 
 void setup() {
 
@@ -50,13 +52,13 @@ void setup() {
   Serial.print("server is at ");
   Serial.println(Ethernet.localIP());
 
-
+  
 
 }
 
 void loop() {
     if (is_enrol){
-    huella.enrrol();
+    finger.enrrol();
     is_enrrol= false;
   }else{
     huella.readfingr();
