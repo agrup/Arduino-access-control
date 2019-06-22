@@ -1,4 +1,5 @@
-
+#ifndef sd_fp_h
+#define sd_fp_h
 #include <SPI.h>
 #include <SD.h> 
 #include "Arduino.h"
@@ -79,3 +80,4 @@ String savefile(String persona)
 
 }
 
+#endif
