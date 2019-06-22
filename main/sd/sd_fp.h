@@ -42,26 +42,9 @@ StaticJsonDocument<200> readfile()
       Serial.println(list);
       doc["nombre"] = list;
       doc["time"] = 1351824120;
-
-
-
-  // Add values in the object
-  //
-  // Most of the time, you can rely on the implicit casts.
-  // In other case, you can do root.set<long>("time", 1351824120);
-
-
-
-  //serializeJson(doc, Serial);
-
-
-  Serial.println();
-
-      // Serial.write(myFile.read());
+    // Serial.write(myFile.read());
       // result += myFile.read();
     }
-
-      // myFile.close();
 
   } else {
 
