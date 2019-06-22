@@ -4,6 +4,7 @@
 #include <SD.h> 
 #include "Arduino.h"
 #include <ArduinoJson.h>
+#include "../time/time.h"
 
 File myFile;
 String getValue(String data, char separator, int index)
@@ -56,22 +57,77 @@ StaticJsonDocument<200> readfile()
 
 }
 int get_next_id(){
-
+  if (!SD.begin(4)) {
+    Serial.println("initialization failed!");
+    //while (1);
+  }
+  myFile = SD.open("ID.TXT");
+  if (myFile) {    
+    long id = myFile.read();
+    int id_res = id;
+    id = id + 1;
+  } 
+  myFile.close();
+  myFile = SD.open("PERS.TXT",FILE_WRITE);
+  myFile.println(id);
+  myFile.close();
+  return id_res;
 }
 
-bool isperson(){
-  return true;
+bool isperson(String person){
+  Serial.print("Initializing SD card...");
+
+  if (!SD.begin(4)) {
+    Serial.println("initialization failed!");
+    //while (1);
+  }
+  myFile = SD.open("PERS.TXT");
+  if (myFile) {
+    while (myFile.available()) {
+      String list = myFile.readStringUntil('\n');
+      String person_in_file = getValue(list, ";", 0);
+      if(person_in_file.compareTo(person))
+      {
+        myFile.close();
+        return true;
+      }      
+    }
+  myFile.close();
+  return false;
+}
+
+void save_fichada(String content, int tipo)
+{
+  if (!SD.begin(4)) {
+    Serial.println("initialization failed!");
+    //while (1);
+  }
+  Serial.println("initialization done.");
+  // re-open the file for reading:
+  myFile = SD.open("FICH.TXT",FILE_WRITE);
+  if (myFile) {
+    String t = get_time();
+    String d = get_date() ;
+    String s = content+";"+t+";"+d+";"+String(tipo);
+    myFile.println(s);
+    myFile.close();
+
+  } else {
+    Serial.println("error opening test.txt");
+  }
+ 
 }
 
 void save_person(int id,int legajo){
     if (!SD.begin(4)) {
-    Serial.println("initialization failed!");
+      Serial.println("initialization failed!");
     //while (1);
     }
     myFile = SD.open("PERS.TXT",FILE_WRITE);
     if (myFile) {
       Serial.println("open file");
-      myFile.println();
+      String s = String(id)+";"+String(legajo);
+      myFile.println(s);
       myFile.close();
 
     } else {

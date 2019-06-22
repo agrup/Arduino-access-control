@@ -27,32 +27,46 @@ void read_card()
 {   
     // Buscamos tarjetas y las lee
     if ( rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
-        write_display("Se detecto la tarjeta:     ", 0, 0);
         String content= "";
         byte letter;
         for (byte i = 0; i < rfid.uid.size; i++)  {
             content.concat(String(rfid.uid.uidByte[i] < 0x10 ? " 0" : " "));
             content.concat(String(rfid.uid.uidByte[i], DEC));
-        }
-        write_display("ID:"+content, 0, 0);
-        green_led();
-        delay(1000);
-        Serial.println("ID de tarjeta:"+ content);      
+        }        
+        bool b =isperson(content);
+        if (b)
+        {
+            save_fichada(content, 1);
+            write_display("Id:"+content, 0, 0);
+            green_led();
+            delay(1000);
+            Serial.println("ID de tarjeta:"+ content);      
+        }else
+        {
+            write_display("No válido", 0, 0);
+            green_led();
+            delay(1000);
+            Serial.println("ID de tarjeta:"+ content);      
+        }  
+        
     }    
 }
 
-void add_card(String id)
+void add_card(String legajo)
 {
+    
      // Buscamos tarjetas y las lee
     if ( rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) 
     {
         String content= "";
         byte letter;
         for (byte i = 0; i < rfid.uid.size; i++)  {
-            content.concat(String(rfid.uid.uidByte[i] < 0x10 ? " 0" : " "));
+            content.concat(String(rfid.uid.uidByte[i] < 0x10 ? " 0" : ""));
             content.concat(String(rfid.uid.uidByte[i], DEC));
         }
-        write_display("ID:"+content, 0, 0);        
+        write_display("ID:"+content, 0, 0);
+        l = String(legajo);
+        save_person(content,l);
         // Asociamos el id de persona con la tarjeta
         //save_person_card(id, content);     
         write_display("Tarjeta agregada  ", 0, 0);              

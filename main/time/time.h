@@ -18,10 +18,30 @@ void time_init () {
    //rtc.adjust(DateTime(2019, 3, 21, 8, 0, 0));
 }
 
-void print_time () {
+void print_time () 
+{
     DateTime hoy = rtc.now();
     char s[8];
     sprintf(s, "Hora:%.2i:%.2i", hoy.hour(), hoy.minute(), hoy.second());
     write_display(s, 0, 1);
 }
+
+String get_time()
+{
+    DateTime hoy = rtc.now();
+    char s[5];
+    sprintf(s, "%.2i:%.2i", hoy.hour(), hoy.minute());
+    String res = String(s);
+    return res;
+}
+
+String get_date()
+{
+    DateTime hoy = rtc.now();
+    char s[10];
+    sprintf(s, "%.2i/%.2i/%.4i", hoy.day(), hoy.month(), hoy.year());
+    String res = String(s);
+    return res;
+}
+
 #endif
