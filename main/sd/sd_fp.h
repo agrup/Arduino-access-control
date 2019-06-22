@@ -26,7 +26,6 @@ String getValue(String data, char separator, int index)
 StaticJsonDocument<200> readfile()
 {
   StaticJsonDocument<200> doc;
-  String result="{";
   //String result_2[];           
   Serial.print("Initializing SD card...");
 
@@ -41,20 +40,46 @@ StaticJsonDocument<200> readfile()
     while (myFile.available()) {
       String list = myFile.readStringUntil('\n');
       Serial.println(list);
+      String aux = getValue(list," ",0);
+
+      Serial.println(aux);
       doc["nombre"] = list;
       doc["time"] = 1351824120;
-    // Serial.write(myFile.read());
-      // result += myFile.read();
     }
 
   } else {
 
     Serial.println("error opening test.txt");
   }
-  result += "}";
+
  return doc;
 
 }
+int get_next_id(){
+
+}
+
+bool isperson(){
+  return true;
+}
+
+void save_person(int id,int legajo){
+    if (!SD.begin(4)) {
+    Serial.println("initialization failed!");
+    //while (1);
+    }
+    myFile = SD.open("PERS.TXT",FILE_WRITE);
+    if (myFile) {
+      Serial.println("open file");
+      myFile.println();
+      myFile.close();
+
+    } else {
+      Serial.println("error opening test.txt");
+    }
+}
+
+
 
 String savefile(String persona)
 {
