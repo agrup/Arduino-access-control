@@ -57,6 +57,7 @@ StaticJsonDocument<200> readfile()
 
 }
 int get_next_id(){
+<<<<<<< HEAD
   if (!SD.begin(4)) {
     Serial.println("initialization failed!");
     //while (1);
@@ -116,6 +117,13 @@ void save_fichada(String content, int tipo)
     Serial.println("error opening test.txt");
   }
  
+=======
+  return 3;
+}
+
+bool isperson(String person){
+  return true;
+>>>>>>> 0faa644e82ce5767822c9bd2a96486ece3bc563e
 }
 
 void save_person(int id,int legajo){
