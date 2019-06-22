@@ -59,7 +59,7 @@ int get_next_id(){
   return 3;
 }
 
-bool isperson(){
+bool isperson(String person){
   return true;
 }
 
