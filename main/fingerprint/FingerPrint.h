@@ -24,8 +24,9 @@ void finger_init()
   finger.begin(57600);
 }
 
-uint8_t getFingerprintEnroll(int id) {
+uint8_t getFingerprintEnroll(int legajo) {
 
+  int id = get_next_id();
   int p = -1;
   Serial.print("Waiting for valid finger to enroll as #"); Serial.println(id);
   while (p != FINGERPRINT_OK) {
@@ -154,6 +155,7 @@ uint8_t getFingerprintEnroll(int id) {
     char s[16];
     sprintf(s, "Id:%i                     ", id);
     write_display(s, 0, 0);
+    save_person(id, legajo);
     delay(1000);
     Serial.println("Stored!");
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
