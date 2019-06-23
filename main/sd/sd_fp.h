@@ -4,7 +4,8 @@
 #include <SD.h> 
 #include "Arduino.h"
 #include <ArduinoJson.h>
-#include "../time/time.h"
+//#include "../time/time.h"
+#include "../leds/led.h"
 
 File myFile;
 String getValue(String data, char separator, int index)
@@ -12,9 +13,7 @@ String getValue(String data, char separator, int index)
     int found = 0;
     int strIndex[] = { 0, -1 };
     int maxIndex = data.length() - 2;
-    Serial.println(maxIndex);
-    Serial.println(found);
-    Serial.println(index);
+
     
     for (int i = 0; i <= maxIndex && found <= index; i++) {
         //Serial.println(data.charAt(i));
@@ -79,10 +78,13 @@ int get_next_id(){
     Serial.println("initialization failed!");
     //while (1);
   }
+  int id;
+  int id_res;
+
   myFile = SD.open("ID.TXT");
   if (myFile) {    
-    long id = myFile.read();
-    int id_res = id;
+    id = myFile.read();
+    id_res = id;
     id = id + 1;
   } 
   myFile.close();
@@ -99,19 +101,20 @@ bool isperson(String person){
     Serial.println("initialization failed!");
     //while (1);
   }
-  myFile = SD.open("PERS.TXT");
-  if (myFile) {
-    while (myFile.available()) {
-      String list = myFile.readStringUntil('\n');
-      String person_in_file = getValue(list, ";", 0);
-      if(person_in_file.compareTo(person))
-      {
-        myFile.close();
-        return true;
-      }      
-    }
-  myFile.close();
-  return false;
+    myFile = SD.open("PERS.TXT");
+    if (myFile) {
+      while (myFile.available()) {
+        String list = myFile.readStringUntil('\n');
+        String person_in_file = getValue(list, ";", 0);
+        if(person_in_file.compareTo(person))
+        {
+          myFile.close();
+          return true;
+        }      
+      }
+    myFile.close();
+    return false;
+  }
 }
 
 void save_fichada(String content, int tipo)
@@ -124,8 +127,10 @@ void save_fichada(String content, int tipo)
   // re-open the file for reading:
   myFile = SD.open("FICH.TXT",FILE_WRITE);
   if (myFile) {
-    String t = get_time();
-    String d = get_date() ;
+    //String t = get_time();
+    //String d = get_date() ;
+    String t="10.30";
+    String d="12/12/2019";
     String s = content+";"+t+";"+d+";"+String(tipo);
     myFile.println(s);
     myFile.close();
