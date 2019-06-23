@@ -10,10 +10,15 @@ String getValue(String data, char separator, int index)
 {
     int found = 0;
     int strIndex[] = { 0, -1 };
-    int maxIndex = data.length() - 1;
-
+    int maxIndex = data.length() - 2;
+    Serial.println(maxIndex);
+    Serial.println(found);
+    Serial.println(index);
+    
     for (int i = 0; i <= maxIndex && found <= index; i++) {
-        if (data.charAt(i) == separator || i == maxIndex) {
+        //Serial.println(data.charAt(i));
+
+        if  (data.charAt(i) == separator || i == maxIndex ) {
             found++;
             strIndex[0] = strIndex[1] + 1;
             strIndex[1] = (i == maxIndex) ? i+1 : i;
@@ -23,9 +28,10 @@ String getValue(String data, char separator, int index)
 }
 
 
-StaticJsonDocument<200> readfile()
+StaticJsonDocument<400> readfile()
 {
-  StaticJsonDocument<200> doc;
+  StaticJsonDocument<400> doc;
+ // StaticJsonDocument<200> info;
   //String result_2[];           
   Serial.print("Initializing SD card...");
 
@@ -33,18 +39,30 @@ StaticJsonDocument<200> readfile()
     Serial.println("initialization failed!");
     //while (1);
   }
-  Serial.println("initialization done.");
+  Serial.println("initialization done. PERS.TXT");
   // re-open the file for reading:
   myFile = SD.open("PERS.TXT");
+  
+ //JsonArray data = doc.createNestedArray("fichadas");
+  JsonObject root = doc.to<JsonObject>();
   if (myFile) {
+    int i = 0;
     while (myFile.available()) {
+      i++;
       String list = myFile.readStringUntil('\n');
-      Serial.println(list);
-      String aux = getValue(list," ",0);
+      
+      String hora = getValue(list,';',1);
+      String nombre = getValue(list,';',0);
 
-      Serial.println(aux);
-      doc["nombre"] = list;
-      doc["time"] = 1351824120;
+      
+      if(list != NULL){
+        JsonObject fichada = root.createNestedObject(String(i));
+        fichada["nombre"]=nombre;
+        fichada["fecha"] = "10-4-2019";
+        fichada["hora"] = hora;
+        serializeJsonPretty(doc, Serial);
+      }
+
     }
 
   } else {
