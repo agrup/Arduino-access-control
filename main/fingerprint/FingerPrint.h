@@ -155,7 +155,9 @@ uint8_t getFingerprintEnroll(int legajo) {
     char s[16];
     sprintf(s, "Id:%i                     ", id);
     write_display(s, 0, 0);
-    save_person(id, legajo);
+    id_s = String(id);
+    l = String(legajo);
+    save_person(id, l);
     delay(1000);
     Serial.println("Stored!");
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
@@ -214,6 +216,8 @@ int getFingerprintIDez() {
   if (p == FINGERPRINT_OK)
   {
     char s[16];
+    String content = String(finger.fingerID);
+    save_fichada(content, 0);
     sprintf(s, "ID:%i           ", finger.fingerID);
     write_display(s, 0, 0);
     green_led();
