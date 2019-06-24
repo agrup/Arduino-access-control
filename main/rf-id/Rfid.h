@@ -65,8 +65,8 @@ void add_card(String legajo)
             content.concat(String(rfid.uid.uidByte[i], DEC));
         }
         write_display("ID:"+content, 0, 0);
-        l = String(legajo);
-        save_person(content,l);
+        //int l = (int) legajo;
+        save_person(content,legajo);
         // Asociamos el id de persona con la tarjeta
         //save_person_card(id, content);     
         write_display("Tarjeta agregada  ", 0, 0);              

@@ -4,7 +4,7 @@
 
 const int red = 6;
 const int green = 7;
-const int buzzer = 9;
+const int buzzer = 11;
 void leds_init()
 {
     // Init leds

@@ -141,7 +141,7 @@ void save_fichada(String content, int tipo)
  
 }
 
-void save_person(int id,int legajo){
+void save_person(String id,String legajo){
     if (!SD.begin(4)) {
       Serial.println("initialization failed!");
     //while (1);
@@ -149,7 +149,7 @@ void save_person(int id,int legajo){
     myFile = SD.open("PERS.TXT",FILE_WRITE);
     if (myFile) {
       Serial.println("open file");
-      String s = String(id)+";"+String(legajo);
+      String s = id+";"+legajo;
       myFile.println(s);
       myFile.close();
 

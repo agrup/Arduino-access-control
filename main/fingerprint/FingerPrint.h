@@ -155,9 +155,9 @@ uint8_t getFingerprintEnroll(int legajo) {
     char s[16];
     sprintf(s, "Id:%i                     ", id);
     write_display(s, 0, 0);
-    id_s = String(id);
-    l = String(legajo);
-    save_person(id, l);
+    //int id_s = id;
+    String l = String(legajo);
+    save_person(String(id), l);
     delay(1000);
     Serial.println("Stored!");
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
