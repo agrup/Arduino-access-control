@@ -3,6 +3,7 @@
 //#include <DateTime.h>
 #include "../display/Display.h"
 #include <Wire.h>
+#include "Arduino.h"
 #include <RTClib.h>
 
 RTC_Millis rtc;     //Reloj por software
