@@ -23,7 +23,7 @@ void print_time ()
 {
     DateTime hoy = rtc.now();
     char s[8];
-    sprintf(s, "Hora:%.2i:%.2i", hoy.hour(), hoy.minute(), hoy.second());
+    sprintf(s, "Hora:%.2i:%.2i", hoy.hour(), hoy.minute());
     write_display(s, 0, 1);
 }
 
