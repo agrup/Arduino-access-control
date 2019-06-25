@@ -8,6 +8,7 @@
 #include "../leds/led.h"
 
 File myFile;
+
 String getValue(String data, char separator, int index)
 {
     int found = 0;
@@ -154,7 +155,7 @@ void save_person(String id,String legajo){
       myFile.close();
 
     } else {
-      Serial.println("error opening test.txt");
+      Serial.println("error opening ");
     }
 }
 
