@@ -106,7 +106,7 @@ bool isperson(String person){
     if (myFile) {
       while (myFile.available()) {
         String list = myFile.readStringUntil('\n');
-        String person_in_file = getValue(list, ";", 0);
+        String person_in_file = getValue(list, ';', 0);
         if(person_in_file.compareTo(person))
         {
           myFile.close();

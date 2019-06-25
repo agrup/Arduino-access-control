@@ -1,6 +1,6 @@
 //#include <ArduinoJson.h>
-#include <Ethernet.h>
-#include <SD.h>
+//#include <Ethernet.h>
+//#include <SD.h>
 #include "sd/sd_fp.h"
 #include "ethernet/ethernet.h"
 
@@ -14,12 +14,14 @@
 void setup() 
 {
   Serial.begin(9600);
-  ethernet_init();
+  
+  card_init();
   leds_init();
   time_init();
   display_init();
   finger_init();
-  card_init();
+  delay(1000);
+  ethernet_init();
 }
 
 void loop() 
