@@ -4,8 +4,10 @@
 #include <SD.h>
 #include "../sd/sd_fp.h"
 #include "../leds/led.h"
+#include "../fingerprint/FingerPrint.h"
+#include "../rf-id/Rfid.h"
 
-int led = 3;
+
 
 int pos = 0; 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };   //physical mac address
@@ -22,7 +24,7 @@ void ethernet_init(){
     /*while (!Serial) {
         ; // wait for serial port to connect. Needed for Leonardo only
     }*/
-    pinMode(led, OUTPUT);
+    //pinMode(led, OUTPUT);
     Ethernet.begin(mac, ip, gateway, subnet);
     server.begin();
     Serial.print("server is at ");
@@ -57,7 +59,8 @@ void ethernet_listen(){
          if (c == '\n') {      
           // mostrar fichadas     
           if (readString.indexOf("?readfichada") > 0){
-              StaticJsonDocument<800> doc;
+              //StaticJsonDocument<800> doc;
+              DynamicJsonDocument
               doc = readfile();
               client.flush();   
               client.println(F("HTTP/1.0 200 OK"));
@@ -77,6 +80,17 @@ void ethernet_listen(){
             Serial.print("newString is: ");
             Serial.println(newString);
             int val = newString.toInt();
+            enrol(val);
+            Serial.println(val);
+          }
+          if (readString.indexOf("?newcard") > 0){ 
+            int pos1 = readString.indexOf('=');
+            int pos2 = readString.indexOf('&');
+            String newString = readString.substring(pos1+1, pos2);
+            Serial.print("newString is: ");
+            Serial.println(newString);
+            int val = newString.toInt();
+            add_card(newString);
             Serial.println(val);
           }
           if (readString.indexOf("?enrolar") > 0){ 
@@ -104,6 +118,31 @@ void ethernet_listen(){
               client.println("</HTML>");
               flag = true;
           }
+          if (readString.indexOf("?card") > 0){ 
+              client.println("HTTP/1.1 200 OK"); //send new page
+              client.println("Content-Type: text/html");
+              client.println();     
+              client.println("<HTML>");
+              client.println("<HEAD>");
+              client.println("<meta name='apple-mobile-web-app-capable' content='yes' />");
+              client.println("<meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />");
+              client.println("<link rel='stylesheet' type='text/css' href='https://randomnerdtutorials.com/ethernetcss.css' />");
+              client.println("<TITLE>Enrolar Tarjeta</TITLE>");
+              client.println("</HEAD>");
+              client.println("<BODY>");
+              client.println("<H2>Enrolando</H2>");
+              client.println("<br />");  
+              //client.println("<a href=\"/?enrolar\"\">enrolar</a>");  
+              client.println("<br />");
+              client.println("<FORM ACTION='/?newcard/' method=get >"); //uses IP/port of web page
+              client.println("<br />");
+              client.println("Legajo: <INPUT TYPE=TEXT NAME='newcard' VALUE='' SIZE='25' MAXLENGTH='50'><BR>");
+              client.println("<INPUT TYPE=SUBMIT NAME='submit' VALUE='Enrolar-Card'>");
+              client.println("</FORM>");          
+              client.println("</BODY>");
+              client.println("</HTML>");
+              flag = true;
+          }          
             // enrolar personas
            
             if (!flag){   
@@ -123,9 +162,9 @@ void ethernet_listen(){
               client.println("<hr />");
               client.println("<br />");  
               client.println("<H2>Opciones</H2>");
-              client.println("<br />");  
-              client.println("<a href=\"/?button1on\"\">Descargar Fichadas</a>");
-              client.println("<a href=\"/?button1off\"\">Ver Ultima fichada</a><br />");   
+              // client.println("<br />");  
+              // client.println("<a href=\"/?button1on\"\">Descargar Fichadas</a>");
+               client.println("<a href=\"/?card\"\">Enrolar con tarjeta</a><br />");   
               client.println("<br />");     
               client.println("<br />"); 
               client.println("<a href=\"/?savefichada\"\">Guardar fichada</a>");
@@ -137,11 +176,11 @@ void ethernet_listen(){
               delay(1);
 
             if (readString.indexOf("?button1on") >0){
-                digitalWrite(led, HIGH);
+               // digitalWrite(led, HIGH);
                               
             }
             if (readString.indexOf("?button1off") >0){
-                digitalWrite(led, LOW);
+                //digitalWrite(led, LOW);
                 
             }
         

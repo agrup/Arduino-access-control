@@ -171,6 +171,7 @@ uint8_t getFingerprintEnroll(int legajo) {
     save_person(String(id), l);
     delay(1000);
     Serial.println("Stored!");
+    return true;
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
     Serial.println("Communication error");
     return p;
@@ -186,7 +187,7 @@ uint8_t getFingerprintEnroll(int legajo) {
   }   
 }
 
-void enrrol(int id)
+void enrol(int id)
 {    
   while (!Serial);  // For Yun/Leo/Micro/Zero/...
   /*Serial.println("\n\nAdafruit Fingerprint sensor enrollment");  
@@ -205,6 +206,8 @@ void enrrol(int id)
   Serial.print("Enrolling ID #");
   Serial.println(id);  
   while (!  getFingerprintEnroll(id) );
+  
+
 }
 uint8_t getFingerprintID() {
   uint8_t p = finger.getImage();
@@ -305,7 +308,14 @@ int getFingerprintIDez() {
 
 void read_finger()
 {
-  int id = getFingerprintIDez();  
+  int id = getFingerprintIDez(); 
+  Serial.print(id);
+  if(id > 0){
+    save_fichada(String(id),1);
+    Serial.print("fichada guardad");
+    //savefile(String(id)+" "+String(1));
+  }
+  
 }
 
 

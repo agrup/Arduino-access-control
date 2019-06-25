@@ -4,7 +4,7 @@
 #include <SD.h> 
 #include "Arduino.h"
 #include <ArduinoJson.h>
-//#include "../time/time.h"
+#include "../time/time.h"
 #include "../leds/led.h"
 
 File myFile;
@@ -29,9 +29,11 @@ String getValue(String data, char separator, int index)
 }
 
 
-StaticJsonDocument<400> readfile()
+//JsonDocument<1200> readfile()
+DynamicJsonDocument readfile()
 {
-  StaticJsonDocument<400> doc;
+  //StaticJsonDocument<1200> doc;
+  DynamicJsonDocument doc(2048);
  // StaticJsonDocument<200> info;
   //String result_2[];           
   Serial.print("Initializing SD card...");
@@ -42,7 +44,7 @@ StaticJsonDocument<400> readfile()
   }
   Serial.println("initialization done. PERS.TXT");
   // re-open the file for reading:
-  myFile = SD.open("PERS.TXT");
+  myFile = SD.open("FICH.TXT");
   
  //JsonArray data = doc.createNestedArray("fichadas");
   JsonObject root = doc.to<JsonObject>();
@@ -51,16 +53,18 @@ StaticJsonDocument<400> readfile()
     while (myFile.available()) {
       i++;
       String list = myFile.readStringUntil('\n');
-      
+      //String s = content+";"+t+";"+d+";"+String(tipo);
       String hora = getValue(list,';',1);
-      String nombre = getValue(list,';',0);
-
+      String legajo = getValue(list,';',0);
+      String fecha = getValue(list,';',2);
+      String tipo = getValue(list,';',3);
       
       if(list != NULL){
         JsonObject fichada = root.createNestedObject(String(i));
-        fichada["nombre"]=nombre;
-        fichada["fecha"] = "10-4-2019";
+        fichada["Legajo"]=legajo;
+        fichada["fecha"] = fecha;
         fichada["hora"] = hora;
+        fichada["tipo"] = tipo;
         serializeJsonPretty(doc, Serial);
       }
 
@@ -128,10 +132,10 @@ void save_fichada(String content, int tipo)
   // re-open the file for reading:
   myFile = SD.open("FICH.TXT",FILE_WRITE);
   if (myFile) {
-    //String t = get_time();
-    //String d = get_date() ;
-    String t="10.30";
-    String d="12/12/2019";
+    String t = get_time();
+    String d = get_date() ;
+    //String t="10.30";
+    //String d="12/12/2019";
     String s = content+";"+t+";"+d+";"+String(tipo);
     myFile.println(s);
     myFile.close();
