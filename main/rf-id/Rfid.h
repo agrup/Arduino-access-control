@@ -10,7 +10,7 @@
 //#define RST_PIN 9
 // Para Arduino MEGA
 #define SS_PIN 53
-#define RST_PIN 9
+#define RST_PIN 49
 
 MFRC522 rfid(SS_PIN, RST_PIN);
 MFRC522::MIFARE_Key key;

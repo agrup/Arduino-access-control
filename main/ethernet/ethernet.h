@@ -19,21 +19,22 @@ String result_p;
 void ethernet_init(){
     pinMode(4,OUTPUT); // set SD SPI slave select pin to OUTPUT
     digitalWrite(4,HIGH); // disable SD SPI interface. HIGH is disabled.
-    while (!Serial) {
+    /*while (!Serial) {
         ; // wait for serial port to connect. Needed for Leonardo only
-    }
+    }*/
     pinMode(led, OUTPUT);
     Ethernet.begin(mac, ip, gateway, subnet);
     server.begin();
     Serial.print("server is at ");
     Serial.println(Ethernet.localIP());
-    green_led(); 
-    delay(500);
-    green_led_off();
+    // green_led(); 
+    // delay(500);
+    // green_led_off();
 }
 
 
 void ethernet_listen(){
+  //ethernet_init();
      // Create a client connection
   bool flag = false;
   EthernetClient client = server.available();
