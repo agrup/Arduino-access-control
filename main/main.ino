@@ -15,13 +15,19 @@ void setup()
 {
   Serial.begin(9600);
   
+  ethernet_init();
+  delay(100);
   card_init();
+  delay(100);
   leds_init();
+  delay(100);
   time_init();
+  delay(100);
   display_init();
+  delay(100);
   finger_init();
   delay(1000);
-  ethernet_init();
+ 
 }
 
 void loop() 

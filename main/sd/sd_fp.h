@@ -83,18 +83,27 @@ int get_next_id(){
     Serial.println("initialization failed!");
     //while (1);
   }
-  int id;
+  String id;
   int id_res;
-
+  int int_id;
   myFile = SD.open("ID.TXT");
   if (myFile) {    
+    Serial.print("ID leido");
     id = myFile.read();
-    id_res = id;
-    id = id + 1;
+    Serial.println(id);
+    id_res = id.toInt();
+    int_id = id.toInt();
+    int_id = int_id + 1;
+    Serial.print("ID sumado");
+    Serial.print(int_id);
   } 
   myFile.close();
-  myFile = SD.open("PERS.TXT",FILE_WRITE);
-  myFile.println(id);
+  SD.remove("ID.TXT");
+  myFile = SD.open("ID.TXT",FILE_WRITE);
+  Serial.print("ID a grabar");
+  Serial.println(int_id);
+  
+  myFile.println(int_id);
   myFile.close();
   return id_res;
 }

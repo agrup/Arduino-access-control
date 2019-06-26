@@ -37,9 +37,11 @@ void finger_init()
 
 uint8_t getFingerprintEnroll(int legajo) {
 
-  int id = get_next_id();
+  int nextid = get_next_id();
+  Serial.print(nextid);
+  Serial.print("casa");
   int p = -1;
-  Serial.print("Waiting for valid finger to enroll as #"); Serial.println(id);
+  Serial.print("Waiting for valid finger to enroll as #"); Serial.println(nextid);
   while (p != FINGERPRINT_OK) {
     p = finger.getImage();
     switch (p) {
@@ -91,7 +93,7 @@ uint8_t getFingerprintEnroll(int legajo) {
   while (p != FINGERPRINT_NOFINGER) {
     p = finger.getImage();
   }
-  Serial.print("ID "); Serial.println(id);
+  Serial.print("ID "); Serial.println(nextid);
   p = -1;
   write_display("Misma huella     ", 0, 0);
   delay(1000);
@@ -142,7 +144,7 @@ uint8_t getFingerprintEnroll(int legajo) {
   }
   
   // OK converted!
-  Serial.print("Creating model for #");  Serial.println(id);
+  Serial.print("Creating model for #");  Serial.println(nextid);
   
   p = finger.createModel();
   if (p == FINGERPRINT_OK) {
@@ -158,17 +160,17 @@ uint8_t getFingerprintEnroll(int legajo) {
     return p;
   }   
   
-  Serial.print("ID "); Serial.println(id);
-  p = finger.storeModel(id);
+  Serial.print("ID "); Serial.println(nextid);
+  p = finger.storeModel(nextid);
   if (p == FINGERPRINT_OK) {
     write_display("Huella Guardada   ", 0, 0);
     delay(1000);
     char s[16];
-    sprintf(s, "Id:%i                     ", id);
+    sprintf(s, "Id:%i                     ", nextid);
     write_display(s, 0, 0);
     //int id_s = id;
     String l = String(legajo);
-    save_person(String(id), l);
+    save_person(String(nextid), l);
     delay(1000);
     Serial.println("Stored!");
     return true;
@@ -309,7 +311,7 @@ int getFingerprintIDez() {
 void read_finger()
 {
   int id = getFingerprintIDez(); 
-  Serial.print(id);
+  //Serial.print(id);
   if(id > 0){
     save_fichada(String(id),1);
     Serial.print("fichada guardad");
