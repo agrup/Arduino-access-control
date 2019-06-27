@@ -66,9 +66,9 @@ DynamicJsonDocument readfile()
         fichada["hora"] = hora;
         fichada["tipo"] = tipo;
         serializeJsonPretty(doc, Serial);
-      }
-
+      }      
     }
+    myFile.close();
 
   } else {
 
@@ -78,39 +78,51 @@ DynamicJsonDocument readfile()
  return doc;
 
 }
-int get_next_id(){
+
+void reset_ids()
+{
   if (!SD.begin(4)) {
     Serial.println("initialization failed!");
     //while (1);
   }
-  String id;
+  SD.remove("ID.TXT");
+  File f = SD.open("ID.TXT",FILE_WRITE);
+  f.write(1);  
+  f.close();
+}
+
+int get_next_id(){
+  if (!SD.begin(4)) {
+    Serial.println("initialization failed!");
+    //while (1);
+  }  
+  int id;
   int id_res;
   int int_id;
-  myFile = SD.open("ID.TXT");
-  if (myFile) {    
-    Serial.print("ID leido");
-    id = myFile.read();
+  File file = SD.open("ID.TXT", FILE_READ);
+  if (file) {        
+    id = file.read();
+    Serial.print("ID leido: ");
     Serial.println(id);
-    id_res = id.toInt();
-    int_id = id.toInt();
-    int_id = int_id + 1;
-    Serial.print("ID sumado");
+    
+    id_res = id;
+    int_id = id + 1;
+    Serial.print("ID sumado: ");
     Serial.print(int_id);
-  } 
-  myFile.close();
+    file.close();
+  }   
   SD.remove("ID.TXT");
-  myFile = SD.open("ID.TXT",FILE_WRITE);
-  Serial.print("ID a grabar");
-  Serial.println(int_id);
-  
-  myFile.println(int_id);
-  myFile.close();
+  file = SD.open("ID.TXT",FILE_WRITE);
+  Serial.print("ID a grabar: ");
+  Serial.println(int_id);  
+  file.write(int_id);
+  file.close();
   return id_res;
 }
 
-bool isperson(String person){
+int isperson(String person){
+  int res = -1;
   Serial.print("Initializing SD card...");
-
   if (!SD.begin(4)) {
     Serial.println("initialization failed!");
     //while (1);
@@ -120,14 +132,19 @@ bool isperson(String person){
       while (myFile.available()) {
         String list = myFile.readStringUntil('\n');
         String person_in_file = getValue(list, ';', 0);
-        if(person_in_file.compareTo(person))
+        String legajo = getValue(list, ';', 1);
+        Serial.println(person);
+        Serial.println(person_in_file);
+        if(person_in_file.compareTo(person)==0)
         {
+          Serial.println("lalaal");
           myFile.close();
-          return true;
+          Serial.println(legajo);
+          return legajo.toInt();
         }      
       }
     myFile.close();
-    return false;
+    return res;
   }
 }
 
@@ -146,6 +163,7 @@ void save_fichada(String content, int tipo)
     //String t="10.30";
     //String d="12/12/2019";
     String s = content+";"+t+";"+d+";"+String(tipo);
+    Serial.println(s);
     myFile.println(s);
     myFile.close();
 
@@ -164,6 +182,7 @@ void save_person(String id,String legajo){
     if (myFile) {
       Serial.println("open file");
       String s = id+";"+legajo;
+      Serial.println(s);
       myFile.println(s);
       myFile.close();
 
@@ -196,6 +215,40 @@ String savefile(String persona)
   }
  return persona;
 
+}
+
+void clear_fichadas()
+{
+  SD.remove("FICH.TXT");
+  File file = SD.open("FICH.TXT",FILE_WRITE);
+  file.close();
+  write_display("Reset Fichadas           ", 0, 0);
+  green_led();  
+  delay(1000);
+  off_leds();
+}
+
+void clear_ids()
+{
+  SD.remove("ID.TXT");
+  File file = SD.open("ID.TXT",FILE_WRITE);  
+  file.write(1);
+  file.close();
+  write_display("Reset IDs           ", 0, 0);
+  green_led();
+  delay(1000);
+  off_leds();  
+}
+
+void clear_persons()
+{
+  SD.remove("PERS.TXT");
+  File file = SD.open("PERS.TXT",FILE_WRITE);
+  file.close();
+  write_display("Reset Personas           ", 0, 0);
+  green_led();
+  delay(1000);
+  off_leds();
 }
 
 #endif

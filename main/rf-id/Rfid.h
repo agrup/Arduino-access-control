@@ -5,10 +5,10 @@
 #include "../display/Display.h"
 #include "../leds/led.h"
 
-// Para Arduino UNO
+// For Arduino UNO
 //#define SS_PIN 10
 //#define RST_PIN 9
-// Para Arduino MEGA
+// For Arduino MEGA
 #define SS_PIN 53
 #define RST_PIN 49
 
@@ -18,44 +18,45 @@ byte nuidPICC[3];
 
 void card_init()
 {
-    SPI.begin(); // Inicia la comunicación SPI
-    rfid.PCD_Init();      // inicia la libreria MFRC522 
+    SPI.begin(); // Init SPI comunication
+    rfid.PCD_Init();      // Init library MFRC522 
     Serial.println("Sistema rfid iniciado, esperando tarjeta.");
 }
 
 void read_card()
 {   
-    // Buscamos tarjetas y las lee
+    // Search card
     if ( rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
         String content= "";
         byte letter;
         for (byte i = 0; i < rfid.uid.size; i++)  {
-            content.concat(String(rfid.uid.uidByte[i] < 0x10 ? " 0" : " "));
+            content.concat(String(rfid.uid.uidByte[i] < 0x10 ? " 0" : ""));
             content.concat(String(rfid.uid.uidByte[i], DEC));
         }        
-        bool b =isperson(content);
-        if (b)
+        Serial.println("ID de tarjeta:"+ content);      
+        int b = isperson(content);
+        if (b!=-1)
         {
-            save_fichada(content, 1);
-            write_display("Id:"+content, 0, 0);
+            save_fichada(String(b), 1);
+            write_display("Legajo:"+String(b)+"        ", 0, 0);
             green_led();
             delay(1000);
-            Serial.println("ID de tarjeta:"+ content);      
+            off_leds();
+            Serial.println("Legajo:"+ String(b));      
         }else
         {
-            write_display("No válido", 0, 0);
-            green_led();
+            write_display("No Registrado               ", 0, 0);
+            red_led();
             delay(1000);
+            off_leds();
             Serial.println("ID de tarjeta:"+ content);      
-        }  
-        
-    }    
+        }          
+    }
 }
 
 void add_card(String legajo)
-{
-    
-     // Buscamos tarjetas y las lee
+{    
+     // Search card else call add_card
     if ( rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) 
     {
         String content= "";
@@ -64,15 +65,18 @@ void add_card(String legajo)
             content.concat(String(rfid.uid.uidByte[i] < 0x10 ? " 0" : ""));
             content.concat(String(rfid.uid.uidByte[i], DEC));
         }
-        write_display("ID:"+content, 0, 0);
-        //int l = (int) legajo;
         save_person(content,legajo);
-        // Asociamos el id de persona con la tarjeta
-        //save_person_card(id, content);     
-        write_display("Tarjeta agregada  ", 0, 0);              
+        write_display("Tarjeta agregada         ", 0, 0);              
         delay(1000);
+        write_display("Legajo:"+legajo+"            ", 0, 0);              
+        delay(1000);
+        write_display("Retire tarjeta            ", 0, 0);              
+        delay(2000);
     }
-    
+    else
+    {
+        add_card(legajo);
+    }
 }
 
 #endif

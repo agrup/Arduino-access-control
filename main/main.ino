@@ -14,7 +14,7 @@
 void setup() 
 {
   Serial.begin(9600);
-  
+  delay(100);
   ethernet_init();
   delay(100);
   card_init();
@@ -26,8 +26,7 @@ void setup()
   display_init();
   delay(100);
   finger_init();
-  delay(1000);
- 
+  
 }
 
 void loop() 

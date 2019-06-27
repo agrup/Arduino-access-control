@@ -6,6 +6,7 @@
 #include "../leds/led.h"
 #include "../fingerprint/FingerPrint.h"
 #include "../rf-id/Rfid.h"
+#include "../display/Display.h"
 
 
 
@@ -36,25 +37,19 @@ void ethernet_init(){
 
 
 void ethernet_listen(){
-  //ethernet_init();
-     // Create a client connection
+  // Create a client connection
   bool flag = false;
   EthernetClient client = server.available();
   if (client) {
-
-    while (client.connected()) {  
-      
-     
+    while (client.connected()) {       
       if (client.available()) {
-        char c = client.read();
-     
+        char c = client.read();     
         //read char by char HTTP request
         if (readString.length() < 100) {
           //store characters to string
           readString += c;
           //Serial.print(c);
-         }
-
+        }
          //if HTTP request has ended
          if (c == '\n') {      
           // mostrar fichadas     
@@ -73,6 +68,18 @@ void ethernet_listen(){
                 serializeJsonPretty(doc, client);
                 flag = true;
           }
+          if (readString.indexOf("?clearfich") > 0){
+              clear_fichadas();
+          } 
+
+          if (readString.indexOf("?clearids") > 0){
+              clear_ids();
+          } 
+
+          if (readString.indexOf("?clearpersons") > 0){
+              clear_persons();
+          } 
+
           if (readString.indexOf("?newlegajo") > 0){ 
             int pos1 = readString.indexOf('=');
             int pos2 = readString.indexOf('&');
@@ -90,6 +97,7 @@ void ethernet_listen(){
             Serial.print("newString is: ");
             Serial.println(newString);
             int val = newString.toInt();
+            write_display("Ingrese Tarjeta...      ", 0, 0);
             add_card(newString);
             Serial.println(val);
           }
@@ -102,13 +110,11 @@ void ethernet_listen(){
               client.println("<meta name='apple-mobile-web-app-capable' content='yes' />");
               client.println("<meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />");
               client.println("<link rel='stylesheet' type='text/css' href='https://randomnerdtutorials.com/ethernetcss.css' />");
-              client.println("<TITLE>Enrolar</TITLE>");
+              client.println("<TITLE>Registrar Huella</TITLE>");
               client.println("</HEAD>");
               client.println("<BODY>");
-              client.println("<H2>Enrolando</H2>");
-              client.println("<br />");  
-              client.println("<a href=\"/?enrolar\"\">enrolar</a>");  
-              client.println("<br />");
+              client.println("<H1>Registrando Huella</H1>");
+              client.println("<hr />");
               client.println("<FORM ACTION='/?newlegajo/' method=get >"); //uses IP/port of web page
               client.println("<br />");
               client.println("Legajo: <INPUT TYPE=TEXT NAME='newlegajo' VALUE='' SIZE='25' MAXLENGTH='50'><BR>");
@@ -127,11 +133,11 @@ void ethernet_listen(){
               client.println("<meta name='apple-mobile-web-app-capable' content='yes' />");
               client.println("<meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />");
               client.println("<link rel='stylesheet' type='text/css' href='https://randomnerdtutorials.com/ethernetcss.css' />");
-              client.println("<TITLE>Enrolar Tarjeta</TITLE>");
+              client.println("<TITLE>Registrar Tarjeta</TITLE>");
               client.println("</HEAD>");
               client.println("<BODY>");
-              client.println("<H2>Enrolando</H2>");
-              client.println("<br />");  
+              client.println("<H1>Registrando Tarjeta</H1>");
+              client.println("<hr />");
               //client.println("<a href=\"/?enrolar\"\">enrolar</a>");  
               client.println("<br />");
               client.println("<FORM ACTION='/?newcard/' method=get >"); //uses IP/port of web page
@@ -155,51 +161,37 @@ void ethernet_listen(){
               client.println("<meta name='apple-mobile-web-app-capable' content='yes' />");
               client.println("<meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />");
               client.println("<link rel='stylesheet' type='text/css' href='https://randomnerdtutorials.com/ethernetcss.css' />");
-              client.println("<TITLE>Reloj Fichadas</TITLE>");
+              client.println("<TITLE>Arduino Access Control</TITLE>");
               client.println("</HEAD>");
               client.println("<BODY>");
-              client.println("<H1>Reloj de fichadas</H1>");
+              client.println("<H1>Arduino Access Control</H1>");
               client.println("<hr />");
-              client.println("<br />");  
               client.println("<H2>Opciones</H2>");
-              // client.println("<br />");  
-              // client.println("<a href=\"/?button1on\"\">Descargar Fichadas</a>");
-               client.println("<a href=\"/?card\"\">Enrolar con tarjeta</a><br />");   
+              client.println("<br />");
+              client.println("<a href=\"/?card\"\">Agregar tarjeta</a><br />");   
               client.println("<br />");     
               client.println("<br />"); 
-              client.println("<a href=\"/?savefichada\"\">Guardar fichada</a>");
-              client.println("<a href=\"/?readfichada\"\">Leer fichada</a>");
-              client.println("<a href=\"/?enrolar\"\">enrolar</a>"); 
+              client.println("<a href=\"/?readfichada\"\">Leer fichadas</a><br />");
+              client.println("<br />");     
+              client.println("<br />"); 
+              client.println("<a href=\"/?enrolar\"\">Agregar Huella</a><br />"); 
+              client.println("<br />");     
+              client.println("<br />"); 
+              client.println("<br />");
+              client.println("<H2>Restablecer</H2>");
+              client.println("<br />"); 
+              client.println("<a href=\"/?clearfich\"\">Eliminar fichadas</a><br />"); 
+              client.println("<br />");     
+              client.println("<br />"); 
+              client.println("<a href=\"/?clearids\"\">Eliminar Ids</a><br />"); 
+              client.println("<br />");     
+              client.println("<br />"); 
+              client.println("<a href=\"/?clearpersons\"\">Eliminar Personas</a><br />"); 
+              client.println("<br />");     
               client.println("<br />"); 
               client.println("</BODY>");
               client.println("</HTML>");
               delay(1);
-
-            if (readString.indexOf("?button1on") >0){
-               // digitalWrite(led, HIGH);
-                              
-            }
-            if (readString.indexOf("?button1off") >0){
-                //digitalWrite(led, LOW);
-                
-            }
-        
-            if (readString.indexOf("?savefichada") >0){
-              
-
-              savefile("Agu;10:30");
-              savefile("Mario;11:30");
-              
-              client.flush();
-
-              
-              Serial.println("initialization done.");
-            
-                            
-            }
-            if (readString.indexOf("?button2off") >0){
-
-            }
             }
             readString="";  
            client.stop();
@@ -207,7 +199,7 @@ void ethernet_listen(){
          }
        }
     }
-}
+  }
 }
 
 

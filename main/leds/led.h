@@ -42,8 +42,7 @@ void red_led()
     digitalWrite(green, LOW);
     digitalWrite(red, LOW);
     digitalWrite(red, HIGH);
-    //delay(1000);
-    digitalWrite(red, LOW);
+    ring();
 }
 
 void off_leds()
